@@ -8,7 +8,7 @@
 4. **Evaluation.** A 14-question dataset uploaded to Langfuse, an experiment over it with deterministic scores per item, and the scores read back from the API.
 5. **Masking.** An email address and phone number in a request, with each of the SDK's two masking hooks, and what the stored trace contains.
 
-It accompanies the article *Langfuse: Tracing and Evaluating an LLM Application* on [snehalagrawal.com](https://snehalagrawal.com/articles/).
+It accompanies the article [Langfuse: Tracing and Evaluating an LLM Application](https://snehalagrawal.com/articles/langfuse-tracing-and-evaluating-an-llm-application/) on snehalagrawal.com.
 
 ## The application
 

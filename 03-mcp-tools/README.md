@@ -8,6 +8,8 @@ The [Model Context Protocol](https://modelcontextprotocol.io) (MCP) standardises
 4. **Security.** An instruction injected into a tool result, and a poisoned tool description on a second server; how often each model follows them, and what the host can do about it.
 5. **The transport.** Startup and per-call latency over stdio and over Streamable HTTP, with no model.
 
+It accompanies the article [MCP: Giving a Model Your Own Tools and Data](https://snehalagrawal.com/articles/mcp-giving-a-model-your-own-tools-and-data/) on snehalagrawal.com.
+
 ## Run it
 
 Requirements: Python 3.12, and [Ollama](https://ollama.com) for parts 1 to 4.

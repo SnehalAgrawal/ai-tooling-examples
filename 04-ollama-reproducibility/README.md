@@ -6,7 +6,7 @@
 2. **The context window you didn't choose.** The same 14,835-token request through the native API with `num_ctx` set, and through the OpenAI-compatible endpoint, which can't set it.
 3. **Which settings change the reply.** Eight requests at temperature 0 with a fixed seed, compared word for word across reloads, warm models, the prompt cache, context and batch sizes, CPU against GPU, the OpenAI-compatible endpoint, sampling seeds, and concurrent requests.
 
-It accompanies an article in the AI Tooling track on [snehalagrawal.com](https://snehalagrawal.com/articles/) (in progress).
+It accompanies the article [Ollama for Development: Running Local Models Reproducibly](https://snehalagrawal.com/articles/ollama-for-development-running-local-models-reproducibly/) on snehalagrawal.com.
 
 ## Run it
 

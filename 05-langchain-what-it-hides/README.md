@@ -10,7 +10,7 @@ It measures five things, with one example throughout (a fleet-operations assista
 4. **Retries and errors.** Connection refused, HTTP 500 and 404, a slow reply, a malformed body, and an error inside the stream: the exception, the number of requests, the time taken.
 5. **Streaming and token counts.** Whether `.stream()` yields what came over the wire, and where Ollama's token counts end up.
 
-It accompanies an article in the AI Tooling series on [snehalagrawal.com](https://snehalagrawal.com/articles/).
+It accompanies the article [LangChain: What It Gives You and What It Hides](https://snehalagrawal.com/articles/langchain-what-it-gives-you-and-what-it-hides/) on snehalagrawal.com.
 
 ## Run it
 
