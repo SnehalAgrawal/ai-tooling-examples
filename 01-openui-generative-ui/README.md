@@ -6,7 +6,7 @@
 2. **Whether small local models write valid OpenUI Lang.** Twelve requests to `llama3.2:3b` and `qwen2.5:3b`: with OpenUI's generated prompt, with two examples added, with a repair loop, and, for comparison, as schema-constrained JSON. Every reply that passed the automatic checks was also read and labelled by hand.
 3. **Streaming.** How far into a reply the first complete component appears.
 
-It accompanies an article in the AI Tooling track on [snehalagrawal.com](https://snehalagrawal.com/articles/) (in progress).
+It accompanies the article [OpenUI: Letting a Model Answer With an Interface](https://snehalagrawal.com/articles/openui-letting-a-model-answer-with-an-interface/) on snehalagrawal.com.
 
 ## Run it
 

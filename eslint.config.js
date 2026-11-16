@@ -1,5 +1,5 @@
 // ESLint configuration for every JavaScript demo in this repository.
-// Run from the repository root: npm run lint:js
+// Run from the repository root: npm run lint:js (Python: npm run lint:py)
 import js from "@eslint/js";
 import globals from "globals";
 

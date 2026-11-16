@@ -1,0 +1,165 @@
+# Self-hosted Langfuse for this demo, on this machine only.
+#
+# Based on Langfuse's own docker-compose.yml at tag v4.72.0
+# (https://github.com/langfuse/langfuse/blob/v4.72.0/docker-compose.yml), trimmed to the settings
+# this demo needs, with these changes:
+#   - every image pinned by tag and digest;
+#   - images pulled from Docker Hub directly, not through docker.langfuse.com (that registry
+#     endpoint measures pulls; see https://langfuse.com/self-hosting/security/telemetry);
+#   - TELEMETRY_ENABLED=false and LANGFUSE_DISABLE_SIGNUP_ONBOARDING=true;
+#   - only the UI/API (3000) and MinIO's S3 port are published, and only on 127.0.0.1;
+#     Postgres, ClickHouse, Redis and the worker are reachable only inside the compose network;
+#   - headless initialization creates an organization, a project, its API keys and a user.
+#
+# LOCAL DEMO VALUES ONLY: every password, secret and key below is a placeholder for a stack that
+# listens on 127.0.0.1 and holds nothing but demo data. Never reuse them anywhere else.
+
+name: langfuse-demo
+
+x-langfuse-env: &langfuse-env
+  NEXTAUTH_URL: http://localhost:3000
+  DATABASE_URL: postgresql://postgres:local-demo-postgres@postgres:5432/postgres
+  SALT: local-demo-salt
+  ENCRYPTION_KEY: "0000000000000000000000000000000000000000000000000000000000000000"
+  TELEMETRY_ENABLED: "false"
+  LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
+  CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
+  CLICKHOUSE_URL: http://clickhouse:8123
+  CLICKHOUSE_USER: clickhouse
+  CLICKHOUSE_PASSWORD: local-demo-clickhouse
+  CLICKHOUSE_CLUSTER_ENABLED: "false"
+  LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+  LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+  LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: minio
+  LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: local-demo-minio
+  LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+  LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+  LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+  LANGFUSE_S3_MEDIA_UPLOAD_REGION: auto
+  LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: minio
+  LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: local-demo-minio
+  LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+  LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_MEDIA_UPLOAD_PREFIX: media/
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_AUTH: local-demo-redis
+
+x-depends-on: &langfuse-depends-on
+  postgres:
+    condition: service_healthy
+  minio:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+  clickhouse:
+    condition: service_healthy
+
+services:
+  langfuse-worker:
+    image: docker.io/langfuse/langfuse-worker:4.72.0@sha256:aa1724b989a00f1e4ca9930709202489c73deaaf2f1116bbd3d71c77edb8fedb
+    restart: unless-stopped
+    depends_on: *langfuse-depends-on
+    environment:
+      <<: *langfuse-env
+
+  langfuse-web:
+    image: docker.io/langfuse/langfuse:4.72.0@sha256:c311fd9db4b69f6514fdcb1b86a2a105d5a4ed51fbf0ded033ff2722459c804a
+    restart: unless-stopped
+    depends_on: *langfuse-depends-on
+    ports:
+      - 127.0.0.1:3000:3000
+    environment:
+      <<: *langfuse-env
+      NEXTAUTH_SECRET: local-demo-nextauth-secret
+      # Media uploads go from the SDK straight to S3 through a presigned URL on this address.
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://localhost:9090
+      LANGFUSE_S3_MEDIA_UPLOAD_INTERNAL_ENDPOINT: http://minio:9000
+      LANGFUSE_DISABLE_SIGNUP_ONBOARDING: "true"
+      # Headless initialization (https://langfuse.com/self-hosting/administration/headless-initialization).
+      # Values are not double-quoted on purpose: the docs warn that quotes break them.
+      LANGFUSE_INIT_ORG_ID: local-demo-org
+      LANGFUSE_INIT_ORG_NAME: Local demo
+      LANGFUSE_INIT_PROJECT_ID: fleet-assistant
+      LANGFUSE_INIT_PROJECT_NAME: Fleet assistant
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: pk-lf-local-demo
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: sk-lf-local-demo
+      LANGFUSE_INIT_USER_EMAIL: demo@example.com
+      LANGFUSE_INIT_USER_NAME: Demo
+      LANGFUSE_INIT_USER_PASSWORD: local-demo-password
+
+  clickhouse:
+    image: docker.io/clickhouse/clickhouse-server:25.12.11.4@sha256:8a790dd3468db22b1d4e7b18a176f378ff5ff6053b9c48dd4ea1fa71a24c5ba6
+    restart: unless-stopped
+    user: "101:101"
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: clickhouse
+      CLICKHOUSE_PASSWORD: local-demo-clickhouse
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 1s
+
+  minio:
+    # Chainguard publishes only a moving "latest" tag for free; this digest is the build of 2026-10-29.
+    image: cgr.dev/chainguard/minio@sha256:3b6e40c30ecd5cea627e382ff0b82ca841f58c52294578787043ee80c8ef7c82
+    restart: unless-stopped
+    entrypoint: sh
+    # Create the 'langfuse' bucket before starting the server.
+    command: -c 'mkdir -p /data/langfuse && minio server --address ":9000" --console-address ":9001" /data'
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: local-demo-minio
+    ports:
+      - 127.0.0.1:9090:9000
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+      start_period: 1s
+
+  redis:
+    image: docker.io/library/redis:7.4.11@sha256:44960b3100c48159a66d28c18b0588c193492e25f7551d60e51dd464fc3eca5b
+    restart: unless-stopped
+    command: --requirepass local-demo-redis --maxmemory-policy noeviction
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 10s
+      retries: 10
+
+  postgres:
+    image: docker.io/library/postgres:17.10@sha256:7958605b474b3d264a969cb3a123d6aa00ad1e1fe9da8a69984dabb704d93317
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local-demo-postgres
+      POSTGRES_DB: postgres
+      TZ: UTC
+      PGTZ: UTC
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres_data:
+  clickhouse_data:
+  clickhouse_logs:
+  minio_data:
+  redis_data:

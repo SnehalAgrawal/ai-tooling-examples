@@ -1,0 +1,16 @@
+[
+  {"id": "q01", "question": "How long a break must a driver take after 4.5 hours of driving?", "expected_facts": [["30 minutes", "30-minute", "30 min", "thirty minutes"]], "source": "pol-breaks"},
+  {"id": "q02", "question": "What is the top speed of a company van on the motorway?", "expected_facts": [["90 km/h", "90 kilometres per hour", "90 kilometers per hour", "90km/h"]], "source": "pol-speed"},
+  {"id": "q03", "question": "Which extension does a driver call when the van breaks down?", "expected_facts": [["4410"]], "source": "rb-breakdown"},
+  {"id": "q04", "question": "Below what battery level must an electric van be plugged in at the end of a shift?", "expected_facts": [["40 percent", "40%", "40 per cent", "forty percent"]], "source": "rb-ev-charging"},
+  {"id": "q05", "question": "What temperature range must refrigerated parcels stay in?", "expected_facts": [["2 and 8", "2 to 8", "2-8", "2 °c and 8", "2°c and 8", "2 degrees celsius and 8", "2 °c to 8", "2°c to 8"]], "source": "pol-cold-chain"},
+  {"id": "q06", "question": "How many failed delivery attempts before a parcel goes back to the depot?", "expected_facts": [["3 failed", "three failed", "3 attempts", "three attempts", "after 3", "after three"]], "source": "pol-failed-delivery"},
+  {"id": "q07", "question": "Within how many hours must an accident report be filed?", "expected_facts": [["24 hours", "24-hour", "twenty-four hours"]], "source": "rb-accident"},
+  {"id": "q08", "question": "How often does a van get a service?", "expected_facts": [["20000 km", "20000 kilometres", "20000 kilometers", "20000km"], ["6 months", "six months"]], "source": "pol-maintenance"},
+  {"id": "q09", "question": "At what tread depth are tyres replaced?", "expected_facts": [["3 mm", "3mm", "3 millimetres", "3 millimeters"]], "source": "pol-maintenance"},
+  {"id": "q10", "question": "What should a driver do about a lost fuel card?", "expected_facts": [["same day"], ["fleet desk"]], "source": "pol-fuel-card"},
+  {"id": "q11", "question": "What is the maximum payload of a standard van?", "expected_facts": [["1200 kg", "1200kg", "1200 kilograms"]], "source": "pol-loading"},
+  {"id": "q12", "question": "Above what weight do parcels need two people to load?", "expected_facts": [["30 kg", "30kg", "30 kilograms"]], "source": "pol-loading"},
+  {"id": "q13", "question": "How long is a lost parcel held at the depot after the third failed attempt?", "expected_facts": [["7 days", "seven days"]], "source": "pol-failed-delivery"},
+  {"id": "q14", "question": "What is the fleet's policy on drivers' annual leave?", "expected_facts": [["don't know", "do not know", "does not contain", "doesn't contain", "not mentioned", "no information", "not provided", "not specified"]], "source": null}
+]
