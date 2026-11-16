@@ -125,7 +125,7 @@ While a later statement is still streaming, the parser marks the whole tree as p
 
 ## Limitations
 
-- **Two 3-billion-parameter models, twelve requests, one library.** These numbers show how small local models handle a new UI language and where the checks are blind, not how good OpenUI is with the frontier models it is mostly used with. Larger models were not tested, and no hosted model was used.
+- **Two 3-billion-parameter models, twelve requests, one library.** These numbers show how small local models handle a new UI language and where the checks are blind. They don't tell us how larger or hosted models would perform: none was tested.
 - **The prompt is OpenUI's.** It was used as generated, plus examples in one condition. A different prompt could change the results, in either direction.
 - **Table cells are typed as strings** in this library, a choice a model can trip over; constrained JSON cannot. Accepting numbers as well would likely remove several failures. Not measured.
 - **No renderer.** The demo parses and checks interfaces; it does not draw them. "As asked" was judged from the component tree.
