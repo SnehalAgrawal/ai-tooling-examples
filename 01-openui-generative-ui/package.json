@@ -1,0 +1,18 @@
+{
+  "name": "openui-generative-ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenUI measured: tokens against JSON, validity with small local models, and streaming. Companion to the AI Tooling article on OpenUI at snehalagrawal.com.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "tokens": "node scripts/tokens.js"
+  },
+  "dependencies": {
+    "@openuidev/lang-core": "1.1.1",
+    "js-tiktoken": "1.0.21",
+    "zod": "4.6.7"
+  }
+}

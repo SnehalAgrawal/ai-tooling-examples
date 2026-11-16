@@ -1,0 +1,11 @@
+# Local configuration and secrets
+.env
+
+# Demo runs (regenerate with the demo's scripts)
+**/runs/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
